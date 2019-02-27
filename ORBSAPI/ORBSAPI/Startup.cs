@@ -6,6 +6,8 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Serialization;
 using NLog.Extensions.Logging;
 using NLog.Web;
+using ORBS.DAL.DataAccessLayer;
+using ORBS.DAL.IDataAccessLayer;
 
 namespace ORBSAPI
 {
@@ -17,7 +19,7 @@ namespace ORBSAPI
         public Startup(IHostingEnvironment env)
         {
             var builder = new ConfigurationBuilder()
-                .AddEnvironmentVariables(env.ContentRootPath)
+                .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", true, true)
                 .AddEnvironmentVariables();
 
@@ -35,7 +37,14 @@ namespace ORBSAPI
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                     options.SerializerSettings.Formatting = Newtonsoft.Json.Formatting.Indented;
                 });
-            services.AddSingleton<IConfigurationRoot>(Configuration);
+
+            //add singleton service to services
+            services.AddSingleton<IConfiguration>(Configuration);
+
+            //add other for DI
+            services.AddTransient<IMenuCuisineDAL, MenuCuisineDAL>();
+
+            services.AddSingleton(services);
 
             //add CORS to the application
             var cors = Configuration["CORS:Origin"];
