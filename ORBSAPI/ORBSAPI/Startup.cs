@@ -43,6 +43,8 @@ namespace ORBSAPI
 
             //add other for DI
             services.AddTransient<IMenuCuisineDAL, MenuCuisineDAL>();
+            services.AddTransient<ITableDAL, TableDAL>();
+
 
             services.AddSingleton(services);
 
